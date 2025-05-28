@@ -1,8 +1,6 @@
-whisper
-torch
 sounddevice
 scipy
-gtts
-playsound
-requests
 python-dotenv
+whisper 
+requests
+keyboard

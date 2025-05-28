@@ -5,13 +5,14 @@ import whisper
 import os
 import requests
 import subprocess
+import keyboard
 from dotenv import load_dotenv
 
 # Cargar variables de entorno
 load_dotenv()
 DIFY_API_KEY = os.getenv("DIFY_API_KEY")
 DIFY_API_URL = os.getenv("DIFY_API_URL", "https://api.dify.ai/v1/chat-messages")
-GREETING = os.getenv("GREETING", "Hola.")  # 👈 saludo configurable
+GREETING = os.getenv("GREETING", "Hola.")
 
 # === AUDIO INPUT ===
 def grabar_audio(duracion=5, fs=44100):
@@ -57,12 +58,20 @@ def leer_respuesta(texto):
     print(f"[📢] Respuesta: {texto}")
     subprocess.call(['say', '-v', 'Paulina', texto])
 
-# === MAIN ===
+# === LOOP INTERACTIVO ===
 if __name__ == "__main__":
-    subprocess.call(['say', '-v', 'Paulina', GREETING])  # 👈 saludo desde .env
-
-    ruta = grabar_audio()
-    texto = transcribir_audio_local(ruta)
-    print(f"[🗣️] Tú dijiste: {texto}")
-    respuesta = consultar_dify(texto)
-    leer_respuesta(respuesta)
+    subprocess.call(['say', '-v', 'Paulina', GREETING])
+    
+    while True:
+        print("\nPresiona [G] para grabar, [S] para salir")
+        tecla = str(keyboard.read_key()).lower()
+        
+        if tecla == 's' or 'S':
+            print("👋 Saliendo...")
+            break
+        elif tecla == 'g' or 'G':
+            ruta = grabar_audio()
+            texto = transcribir_audio_local(ruta)
+            print(f"[🗣️] Tú dijiste: {texto}")
+            respuesta = consultar_dify(texto)
+            leer_respuesta(respuesta)
